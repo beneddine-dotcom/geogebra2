@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - مدير دورة GeoGebra</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Chart.js للرسوم البيانية -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0a0f2a 0%, #0a1a3a 100%);
+            color: #fff;
+            padding: 1rem;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(135deg, #00b4d8, #00e5ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            font-size: 0.8rem;
+            color: #ccd6f6;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(0, 180, 216, 0.1), rgba(0, 119, 182, 0.1));
+            border-radius: 20px;
+            padding: 1.5rem;
+            text-align: center;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: #00b4d8;
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            color: #00b4d8;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #00e5ff;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #ccd6f6;
+        }
+
+        /* Filters */
+        .filters-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .search-box {
+            flex: 2;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-family: inherit;
+        }
+
+        .search-box i {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #00b4d8;
+        }
+
+        .filter-select {
+            padding: 0.8rem;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 180, 216, 0.3);
+            background: rgba(0,0,0,0.3);
+            color: #fff;
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        .btn {
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00b4d8, #0077b6);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 180, 216, 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff3b30, #d32f2f);
+            color: #fff;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #00c853, #00e676);
+            color: #fff;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ff6d00, #ffab40);
+            color: #fff;
+        }
+
+        /* Charts Section */
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .chart-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 1rem;
+            border: 1px solid rgba(0, 180, 216, 0.2);
+        }
+
+        .chart-card h3 {
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #00b4d8;
+        }
+
+        canvas {
+            max-height: 250px;
+        }
+
+        /* Table */
+        .table-container {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            overflow-x: auto;
+            padding: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        th {
+            background: rgba(0, 180, 216, 0.2);
+            color: #00e5ff;
+            font-weight: 700;
+            position: sticky;
+            top: 0;
+        }
+
+        tr:hover {
+            background: rgba(0, 180, 216, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.3rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #0a0f2a, #0a1a3a);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            border: 1px solid #00b4d8;
+            text-align: center;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 0.5rem 1rem;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            background: #00b4d8;
+            color: #fff;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            font-size: 1.2rem;
+            color: #00b4d8;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #ccd6f6;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .filters-card {
+                flex-direction: column;
+            }
+            .search-box, .filter-select, .btn {
+                width: 100%;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            <h1><i class="fas fa-chalkboard-user"></i> لوحة تحكم المدرب</h1>
+            <p>بن الدين بويعقوب | دورة GeoGebra</p>
+        </div>
+        <div>
+            <button class="btn btn-primary" onclick="refreshData()">
+                <i class="fas fa-sync-alt"></i> تحديث
+            </button>
+            <button class="btn btn-success" onclick="exportToCSV()">
+                <i class="fas fa-file-excel"></i> تصدير Excel
+            </button>
+            <button class="btn btn-warning" onclick="printTable()">
+                <i class="fas fa-print"></i> طباعة
+            </button>
+        </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid" id="statsGrid">
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-users"></i></div><div class="stat-number" id="totalCount">0</div><div class="stat-label">إجمالي المسجلين</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-user-graduate"></i></div><div class="stat-number" id="studentsCount">0</div><div class="stat-label">طلاب</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-chalkboard"></i></div><div class="stat-number" id="teachersCount">0</div><div class="stat-label">أساتذة</div></div>
+        <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar-week"></i></div><div class="stat-number" id="todayCount">0</div><div class="stat-label">تسجيلات اليوم</div></div>
+    </div>
+
+    <!-- Charts -->
+    <div class="charts-section">
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-pie"></i> توزيع المسجلين حسب الصفة</h3>
+            <canvas id="roleChart"></canvas>
+        </div>
+        <div class="chart-card">
+            <h3><i class="fas fa-chart-line"></i> التسجيلات حسب اليوم</h3>
+            <canvas id="dailyChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+        <div class="tab active" onclick="switchTab('all')">📋 جميع المسجلين</div>
+        <div class="tab" onclick="switchTab('students')">🎓 الطلاب</div>
+        <div class="tab" onclick="switchTab('teachers')">👨‍🏫 الأساتذة</div>
+        <div class="tab" onclick="switchTab('today')">📅 تسجيلات اليوم</div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-card">
+        <div class="search-box">
+            <i class="fas fa-search"></i>
+            <input type="text" id="searchInput" placeholder="بحث بالاسم أو البريد أو رقم الهاتف..." onkeyup="filterTable()">
+        </div>
+        <select class="filter-select" id="roleFilter" onchange="filterTable()">
+            <option value="all">🔽 جميع الصفات</option>
+            <option value="طالب ثانوي">طالب ثانوي</option>
+            <option value="طالب جامعي">طالب جامعي</option>
+            <option value="أستاذ">أستاذ</option>
+            <option value="باحث">باحث</option>
+            <option value="مهتم بالرياضيات">مهتم بالرياضيات</option>
+        </select>
+        <button class="btn btn-danger" onclick="deleteSelected()">
+            <i class="fas fa-trash-alt"></i> حذف المحددين
+        </button>
+    </div>
+
+    <!-- Table -->
+    <div class="table-container">
+        <div id="loadingMessage" class="loading">جاري تحميل البيانات... <i class="fas fa-spinner fa-spin"></i></div>
+        <table id="dataTable" style="display: none;">
+            <thead>
+                <tr><th><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                    <th>#</th>
+                    <th>الاسم الكامل</th>
+                    <th>البريد الإلكتروني</th>
+                    <th>الصفة</th>
+                    <th>رقم واتساب</th>
+                    <th>تاريخ التسجيل</th>
+                    <th>تاريخ الدورة</th>
+                    <th>رابط الميت</th>
+                    <th>الحالة</th>
+                    <th>إجراءات</th>
+                </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+        </table>
+        <div id="noDataMessage" class="no-data" style="display: none;">لا توجد بيانات لعرضها</div>
+    </div>
+</div>
+
+<!-- Delete Modal -->
+<div id="deleteModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #ff6d00;"></i>
+        <h3>تأكيد الحذف</h3>
+        <p id="deleteMessage">هل أنت متأكد من حذف المسجلين المحددين؟</p>
+        <div style="display: flex; gap: 1rem; justify-content: center; margin-top: 1rem;">
+            <button class="btn btn-danger" onclick="confirmDelete()">نعم، حذف</button>
+            <button class="btn btn-primary" onclick="closeModal()">إلغاء</button>
+        </div>
+    </div>
+</div>
+
+<!-- Message Modal -->
+<div id="messageModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-info-circle" style="font-size: 3rem; color: #00b4d8;"></i>
+        <h3 id="messageTitle">معلومات</h3>
+        <p id="messageText"></p>
+        <button class="btn btn-primary" onclick="closeMessageModal()" style="margin-top: 1rem;">حسناً</button>
+    </div>
+</div>
+
+<script>
+    let registrationsData = [];
+    let currentTab = 'all';
+    let charts = {};
+
+    // ========================================
+    // إعدادات JSONBin - نفس المفتاح والـ BIN ID في index.html
+    // ========================================
+    const JSONBIN_BIN_ID  = '6a26f13fda38895dfe9afa7d';
+    const JSONBIN_API_KEY = '$2a$10$nNkpERV6bc6IpksHCYQAZOnV2PYTAWMEbwOxY9jVXgyRkLr03ykXm';
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+    const JSONBIN_HEADERS = {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY,
+        'X-Bin-Private': 'false'
+    };
+
+    async function loadData() {
+        document.getElementById('loadingMessage').style.display = 'block';
+        document.getElementById('dataTable').style.display = 'none';
+        document.getElementById('noDataMessage').style.display = 'none';
+
+        try {
+            const res = await fetch(JSONBIN_URL + '/latest', {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const json = await res.json();
+            registrationsData = (json.record?.registrations || []).map((r, i) => ({ ...r, id: i }));
+            localStorage.setItem('geogebra_registrations', JSON.stringify(registrationsData));
+        } catch(e) {
+            console.error('خطأ في جلب البيانات:', e);
+            const saved = localStorage.getItem('geogebra_registrations');
+            registrationsData = saved ? JSON.parse(saved) : [];
+        }
+        updateDisplay();
+    }
+
+    async function saveData() {
+        localStorage.setItem('geogebra_registrations', JSON.stringify(registrationsData));
+        try {
+            await fetch(JSONBIN_URL, {
+                method: 'PUT',
+                headers: JSONBIN_HEADERS,
+                body: JSON.stringify({ registrations: registrationsData })
+            });
+        } catch(e) {
+            console.error('خطأ في الحفظ:', e);
+        }
+    }
+
+    // ========================================
+    // تحديث العرض بالكامل
+    // ========================================
+    function updateDisplay() {
+        updateStats();
+        updateCharts();
+        filterTable();
+    }
+
+    // ========================================
+    // تحديث الإحصائيات
+    // ========================================
+    function updateStats() {
+        const total = registrationsData.length;
+        const students = registrationsData.filter(r => r.role === 'طالب ثانوي' || r.role === 'طالب جامعي').length;
+        const teachers = registrationsData.filter(r => r.role === 'أستاذ').length;
+        
+        const today = new Date().toDateString();
+        const todayCount = registrationsData.filter(r => {
+            const regDate = new Date(r.registrationDate).toDateString();
+            return regDate === today;
+        }).length;
+
+        document.getElementById('totalCount').innerText = total;
+        document.getElementById('studentsCount').innerText = students;
+        document.getElementById('teachersCount').innerText = teachers;
+        document.getElementById('todayCount').innerText = todayCount;
+    }
+
+    // ========================================
+    // تحديث الرسوم البيانية
+    // ========================================
+    function updateCharts() {
+        // إحصاء الصفات
+        const roles = {};
+        registrationsData.forEach(r => {
+            const role = r.role || 'غير محدد';
+            roles[role] = (roles[role] || 0) + 1;
+        });
+
+        // رسم بياني للصفات
+        const ctx1 = document.getElementById('roleChart').getContext('2d');
+        if (charts.roleChart) charts.roleChart.destroy();
+        charts.roleChart = new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: Object.keys(roles),
+                datasets: [{
+                    data: Object.values(roles),
+                    backgroundColor: ['#00b4d8', '#00e5ff', '#ff6d00', '#00c853', '#ff3b30', '#9c27b0'],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom', labels: { color: '#fff' } } }
+            }
+        });
+
+        // إحصاء التسجيلات اليومية (آخر 7 أيام)
+        const daily = {};
+        const last7Days = [...Array(7)].map((_, i) => {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            return d.toDateString();
+        }).reverse();
+
+        last7Days.forEach(day => { daily[day] = 0; });
+        registrationsData.forEach(r => {
+            const day = new Date(r.registrationDate).toDateString();
+            if (daily[day] !== undefined) daily[day]++;
+        });
+
+        const ctx2 = document.getElementById('dailyChart').getContext('2d');
+        if (charts.dailyChart) charts.dailyChart.destroy();
+        charts.dailyChart = new Chart(ctx2, {
+            type: 'line',
+            data: {
+                labels: last7Days.map(d => d.slice(0, 10)),
+                datasets: [{
+                    label: 'عدد المسجلين',
+                    data: last7Days.map(d => daily[d]),
+                    borderColor: '#00b4d8',
+                    backgroundColor: 'rgba(0, 180, 216, 0.1)',
+                    fill: true,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: '#fff' } } },
+                scales: { y: { ticks: { color: '#fff' } }, x: { ticks: { color: '#fff' } } }
+            }
+        });
+    }
+
+    // ========================================
+    // عرض الجدول مع التصفية
+    // ========================================
+    function filterTable() {
+        const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+        const roleFilter = document.getElementById('roleFilter').value;
+        
+        let filtered = [...registrationsData];
+        
+        // تصفية حسب التبويب
+        if (currentTab === 'students') {
+            filtered = filtered.filter(r => r.role === 'طالب ثانوي' || r.role === 'طالب جامعي');
+        } else if (currentTab === 'teachers') {
+            filtered = filtered.filter(r => r.role === 'أستاذ');
+        } else if (currentTab === 'today') {
+            const today = new Date().toDateString();
+            filtered = filtered.filter(r => new Date(r.registrationDate).toDateString() === today);
+        }
+        
+        // تصفية حسب الصفة
+        if (roleFilter !== 'all') {
+            filtered = filtered.filter(r => r.role === roleFilter);
+        }
+        
+        // تصفية حسب البحث
+        if (searchTerm) {
+            filtered = filtered.filter(r => 
+                (r.fullname && r.fullname.toLowerCase().includes(searchTerm)) ||
+                (r.email && r.email.toLowerCase().includes(searchTerm)) ||
+                (r.whatsapp && r.whatsapp.includes(searchTerm))
+            );
+        }
+        
+        displayTable(filtered);
+    }
+
+    // ========================================
+    // عرض البيانات في الجدول
+    // ========================================
+    function displayTable(data) {
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = '';
+        
+        if (data.length === 0) {
+            document.getElementById('dataTable').style.display = 'none';
+            document.getElementById('noDataMessage').style.display = 'block';
+            document.getElementById('loadingMessage').style.display = 'none';
+            return;
+        }
+        
+        document.getElementById('dataTable').style.display = 'table';
+        document.getElementById('noDataMessage').style.display = 'none';
+        document.getElementById('loadingMessage').style.display = 'none';
+        
+        data.forEach((reg, index) => {
+            const row = tbody.insertRow();
+            const date = new Date(reg.registrationDate);
+            
+            row.insertCell(0).innerHTML = `<input type="checkbox" class="rowCheckbox" data-id="${reg.id || index}">`;
+            row.insertCell(1).innerText = index + 1;
+            row.insertCell(2).innerText = reg.fullname || '-';
+            row.insertCell(3).innerText = reg.email || '-';
+            row.insertCell(4).innerHTML = `<span style="background: rgba(0,180,216,0.2); padding: 0.2rem 0.8rem; border-radius: 20px;">${reg.role || '-'}</span>`;
+            row.insertCell(5).innerHTML = `<a href="https://wa.me/${reg.whatsapp?.replace(/^0/, '213')}" target="_blank" style="color: #25D366;"><i class="fab fa-whatsapp"></i> ${reg.whatsapp || '-'}</a>`;
+            row.insertCell(6).innerText = date.toLocaleString('ar');
+            row.insertCell(7).innerText = reg.courseDate || '2026-06-11';
+            row.insertCell(8).innerHTML = `<a href="${reg.meetLink || 'https://meet.google.com/uvb-updz-anc'}" target="_blank" style="color: #00b4d8;"><i class="fab fa-google"></i> رابط</a>`;
+            row.insertCell(9).innerHTML = `<span style="color: #00c853;"><i class="fas fa-check-circle"></i> مسجل</span>`;
+            
+            const actions = row.insertCell(10);
+            actions.innerHTML = `
+                <div class="action-buttons">
+                    <button class="btn btn-small btn-primary" onclick="sendWhatsApp(${index})"><i class="fab fa-whatsapp"></i></button>
+                    <button class="btn btn-small btn-danger" onclick="deleteRow(${index})"><i class="fas fa-trash"></i></button>
+                </div>
+            `;
+        });
+    }
+
+    // ========================================
+    // إرسال رسالة واتساب
+    // ========================================
+    function sendWhatsApp(index) {
+        const reg = registrationsData[index];
+        if (!reg || !reg.whatsapp) {
+            showMessage('خطأ', 'رقم واتساب غير موجود');
+            return;
+        }
+        const message = `مرحباً ${reg.fullname}،\n\nنذكرك بدورة GeoGebra يوم 11 جوان 2026 الساعة 21:00.\nرابط الدورة: https://meet.google.com/uvb-updz-anc\n\nبالتوفيق - المدرب بن الدين بويعقوب`;
+        const phone = reg.whatsapp.startsWith('0') ? '213' + reg.whatsapp.slice(1) : reg.whatsapp;
+        window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+    }
+
+    // ========================================
+    // حذف صف واحد
+    // ========================================
+    function deleteRow(index) {
+        if (confirm('هل أنت متأكد من حذف هذا المسجل؟')) {
+            registrationsData.splice(index, 1);
+            saveData();
+            updateDisplay();
+            showMessage('تم الحذف', 'تم حذف المسجل بنجاح');
+        }
+    }
+
+    // ========================================
+    // حذف المحددين
+    // ========================================
+    let selectedToDelete = [];
+    function deleteSelected() {
+        const checkboxes = document.querySelectorAll('.rowCheckbox:checked');
+        if (checkboxes.length === 0) {
+            showMessage('تنبيه', 'الرجاء تحديد المسجلين المراد حذفهم');
+            return;
+        }
+        
+        selectedToDelete = [];
+        checkboxes.forEach(cb => {
+            const id = cb.getAttribute('data-id');
+            if (id !== null) selectedToDelete.push(parseInt(id));
+        });
+        
+        document.getElementById('deleteMessage').innerText = `هل أنت متأكد من حذف ${selectedToDelete.length} مسجل؟`;
+        document.getElementById('deleteModal').style.display = 'flex';
+    }
+
+    function confirmDelete() {
+        // حذف من end إلى start لتجنب مشاكل المؤشرات
+        selectedToDelete.sort((a,b) => b - a);
+        selectedToDelete.forEach(id => {
+            registrationsData.splice(id, 1);
+        });
+        saveData();
+        updateDisplay();
+        closeModal();
+        showMessage('تم الحذف', `تم حذف ${selectedToDelete.length} مسجل بنجاح`);
+    }
+
+    // ========================================
+    // تحديد/إلغاء تحديد الكل
+    // ========================================
+    function toggleSelectAll() {
+        const selectAll = document.getElementById('selectAll');
+        const checkboxes = document.querySelectorAll('.rowCheckbox');
+        checkboxes.forEach(cb => cb.checked = selectAll.checked);
+    }
+
+    // ========================================
+    // تصدير إلى CSV
+    // ========================================
+    function exportToCSV() {
+        const headers = ['الاسم الكامل', 'البريد الإلكتروني', 'الصفة', 'رقم واتساب', 'تاريخ التسجيل', 'تاريخ الدورة'];
+        const rows = registrationsData.map(r => [
+            r.fullname || '',
+            r.email || '',
+            r.role || '',
+            r.whatsapp || '',
+            new Date(r.registrationDate).toLocaleString('ar'),
+            r.courseDate || '2026-06-11'
+        ]);
+        
+        const csvContent = [headers, ...rows].map(row => row.join(',')).join('\n');
+        const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `geogebra_registrations_${new Date().toISOString().slice(0,10)}.csv`;
+        link.click();
+        showMessage('تم التصدير', 'تم تصدير البيانات بنجاح');
+    }
+
+    // ========================================
+    // طباعة الجدول
+    // ========================================
+    function printTable() {
+        const printWindow = window.open('', '_blank');
+        const tableHtml = document.getElementById('dataTable').cloneNode(true);
+        printWindow.document.write(`
+            <html><head><title>قائمة المسجلين - دورة GeoGebra</title>
+            <style>
+                body { font-family: Arial, sans-serif; direction: rtl; padding: 20px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid #ddd; padding: 8px; text-align: right; }
+                th { background: #00b4d8; color: white; }
+            </style>
+            </head><body>
+            <h1>قائمة المسجلين في دورة GeoGebra</h1>
+            <p>عدد المسجلين: ${registrationsData.length}</p>
+            ${tableHtml.outerHTML}
+            </body></html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // ========================================
+    // تحديث البيانات من Google Sheets
+    // ========================================
+    async function refreshData() {
+        await loadData();
+        showMessage('تم التحديث', `تم تحديث البيانات - عدد المسجلين: ${registrationsData.length}`);
+    }
+
+    // ========================================
+    // تبديل التبويب
+    // ========================================
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+        filterTable();
+    }
+
+    // ========================================
+    // إظهار رسالة
+    // ========================================
+    function showMessage(title, message) {
+        document.getElementById('messageTitle').innerText = title;
+        document.getElementById('messageText').innerText = message;
+        document.getElementById('messageModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+        document.getElementById('deleteModal').style.display = 'none';
+    }
+
+    function closeMessageModal() {
+        document.getElementById('messageModal').style.display = 'none';
+    }
+
+    // ========================================
+    // تهيئة الصفحة
+    // ========================================
+    loadData();
+</script>
+</body>
+</html>

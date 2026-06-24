@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>دورة GeoGebra - مع المدرب بن الدين بويعقوب | تعلم من الصفر</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 30%, #0f172a 60%, #1a1a2e 100%);
+            color: #f1f5f9;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #3b82f6, #dc2626);
+            border-radius: 10px;
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: float linear infinite;
+        }
+        .particle:nth-child(1n) { background: rgba(59, 130, 246, 0.2); }
+        .particle:nth-child(2n) { background: rgba(220, 38, 38, 0.15); }
+        .particle:nth-child(3n) { background: rgba(245, 158, 11, 0.15); }
+        @keyframes float {
+            0% { transform: translateY(100vh) translateX(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px) rotate(360deg); opacity: 0; }
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(15px);
+            padding: 1rem 2rem;
+            z-index: 1000;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.3s ease;
+        }
+        nav.scrolled { 
+            padding: 0.5rem 2rem; 
+            background: rgba(15, 23, 42, 0.98);
+            border-bottom-color: rgba(220, 38, 38, 0.4);
+        }
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #3b82f6, #60a5fa, #f59e0b);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .logo span { 
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #3b82f6, #dc2626);
+            transition: width 0.3s ease;
+            border-radius: 2px;
+        }
+        .nav-links a:hover::after, .nav-links a.active::after { width: 100%; }
+        .nav-links a:hover, .nav-links a.active { 
+            color: #60a5fa; 
+        }
+        .menu-toggle { display: none; font-size: 1.5rem; cursor: pointer; color: #e2e8f0; }
+
+        /* Marquee / Ticker */
+        .ticker-bar {
+            background: linear-gradient(90deg, #1e293b, #1a56db, #dc2626, #f59e0b, #dc2626, #1a56db, #1e293b);
+            background-size: 400% 100%;
+            animation: shimmer 4s ease-in-out infinite;
+            padding: 0.6rem 0;
+            overflow: hidden;
+            position: relative;
+            border-bottom: 2px solid rgba(59, 130, 246, 0.4);
+            margin-top: 70px;
+        }
+        @keyframes shimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .ticker-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3rem;
+            white-space: nowrap;
+            animation: tickerScroll 30s linear infinite;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+        .ticker-content span {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .ticker-content .blue-icon { color: #60a5fa; }
+        .ticker-content .red-icon { color: #ef4444; }
+        .ticker-content .gold-icon { color: #fbbf24; }
+        .ticker-content .tg-icon { color: #26A5E4; }
+        @keyframes tickerScroll {
+            0% { transform: translateX(100%); }
+            100% { transform: translateX(-100%); }
+        }
+        @media (max-width: 768px) {
+            .ticker-content {
+                font-size: 0.75rem;
+                gap: 1.5rem;
+                animation-duration: 18s;
+            }
+            .ticker-bar { margin-top: 65px; }
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+        }
+        .hero-content { max-width: 1000px; z-index: 2; }
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #f1f5f9, #3b82f6, #dc2626, #f59e0b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: gradientShift 5s ease infinite;
+        }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hero-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            border: 2px solid #3b82f6;
+            border-radius: 50px;
+            padding: 0.5rem 1.8rem;
+            margin-bottom: 1.5rem;
+            color: #60a5fa;
+            font-weight: 700;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+        .hero-badge .red-text { color: #ef4444; }
+        .hero p {
+            font-size: 1.2rem;
+            color: #94a3b8;
+        }
+
+        /* Trainer Card */
+        .trainer-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(30, 41, 59, 0.8));
+            border-radius: 30px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 800px;
+            border: 1px solid rgba(59, 130, 246, 0.25);
+            backdrop-filter: blur(10px);
+            flex-wrap: wrap;
+        }
+        .trainer-avatar {
+            width: 150px;
+            height: 150px;
+            background: linear-gradient(135deg, #1a56db, #dc2626);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            border: 3px solid #f59e0b;
+            animation: glow 2.5s ease-in-out infinite alternate;
+        }
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
+            to { box-shadow: 0 0 50px rgba(59, 130, 246, 0.6), 0 0 70px rgba(220, 38, 38, 0.2); }
+        }
+        .trainer-info h3 {
+            font-size: 1.8rem;
+            color: #60a5fa;
+        }
+        .trainer-info .book-title {
+            font-size: 1.2rem;
+            color: #fbbf24;
+            margin: 0.5rem 0;
+        }
+        .trainer-info .highlight-red { color: #ef4444; font-weight: 700; }
+
+        /* Countdown */
+        .countdown-container {
+            background: rgba(30, 41, 59, 0.6);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+        .countdown-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: #fbbf24;
+        }
+        .countdown {
+            display: flex;
+            justify-content: center;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .countdown-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #1a56db, #dc2626);
+            padding: 0.5rem 1rem;
+            border-radius: 15px;
+            min-width: 80px;
+            color: #fff;
+            box-shadow: 0 4px 20px rgba(26, 86, 219, 0.3);
+        }
+        .countdown-item div:last-child {
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-top: 0.3rem;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+            cursor: pointer;
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #1a56db, #3b82f6);
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(26, 86, 219, 0.4);
+        }
+        .btn-primary:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 8px 40px rgba(26, 86, 219, 0.6); 
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #b91c1c, #dc2626);
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(220, 38, 38, 0.4);
+        }
+        .btn-danger:hover { 
+            transform: translateY(-3px) scale(1.02); 
+            box-shadow: 0 8px 40px rgba(220, 38, 38, 0.6); 
+        }
+        .btn-outline {
+            border: 2px solid #3b82f6;
+            color: #60a5fa;
+            background: transparent;
+        }
+        .btn-outline:hover { 
+            background: linear-gradient(135deg, #1a56db, #3b82f6);
+            color: #fff; 
+            transform: translateY(-3px); 
+        }
+        .btn-success { 
+            background: linear-gradient(135deg, #059669, #34d399); 
+            color: #fff; 
+            box-shadow: 0 4px 20px rgba(5, 150, 105, 0.3);
+        }
+        .btn-success:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 35px rgba(5, 150, 105, 0.5); 
+        }
+        .btn-telegram { 
+            background: linear-gradient(135deg, #0088cc, #26A5E4); 
+            color: #fff;
+            box-shadow: 0 4px 25px rgba(38, 165, 228, 0.4);
+        }
+        .btn-telegram:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 8px 40px rgba(38, 165, 228, 0.6);
+        }
+
+        /* Sections */
+        section { padding: 5rem 2rem; }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .section-title {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            color: #f1f5f9;
+        }
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: linear-gradient(90deg, #3b82f6, #dc2626, #f59e0b);
+            border-radius: 3px;
+        }
+
+        /* Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        .feature-card {
+            background: rgba(30, 41, 59, 0.5);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(59, 130, 246, 0.15);
+        }
+        .feature-card:hover { 
+            transform: translateY(-10px); 
+            border-color: #3b82f6; 
+            box-shadow: 0 10px 50px rgba(59, 130, 246, 0.15);
+            background: rgba(30, 41, 59, 0.7);
+        }
+        .feature-icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+            background: linear-gradient(135deg, #3b82f6, #dc2626);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .feature-card h3 { color: #60a5fa; margin-bottom: 0.5rem; }
+        .feature-card p { color: #94a3b8; }
+
+        /* Outline */
+        .outline-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        .outline-item {
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 15px;
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        .outline-item:hover { 
+            background: rgba(59, 130, 246, 0.15); 
+            transform: translateX(5px);
+            border-color: #3b82f6;
+        }
+        .outline-number {
+            background: linear-gradient(135deg, #1a56db, #dc2626);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            flex-shrink: 0;
+            color: #fff;
+        }
+
+        /* Examples Gallery */
+        .examples-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .example-card {
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        .example-card:hover { 
+            transform: translateY(-5px); 
+            border-color: #3b82f6;
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.1);
+        }
+        .example-card iframe { width: 100%; height: 250px; border: none; }
+        .example-info { padding: 1rem; }
+        .example-info h4 { margin-bottom: 0.5rem; color: #60a5fa; }
+
+        /* Pricing */
+        .pricing-card {
+            max-width: 450px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(26, 86, 219, 0.12), rgba(30, 41, 59, 0.8));
+            border-radius: 30px;
+            padding: 2.5rem;
+            text-align: center;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            transition: all 0.4s ease;
+        }
+        .pricing-card:hover {
+            border-color: #f59e0b;
+            box-shadow: 0 10px 50px rgba(59, 130, 246, 0.15);
+        }
+        .price { 
+            font-size: 3.5rem; 
+            font-weight: 800; 
+            color: #fbbf24; 
+            margin: 1rem 0; 
+        }
+        .price small { font-size: 1.5rem; color: #94a3b8; }
+        .pricing-card h3 { color: #60a5fa; }
+        .pricing-card p { color: #cbd5e1; margin: 0.5rem 0; }
+        .pricing-card .check-blue { color: #3b82f6; }
+        .pricing-card .check-gold { color: #fbbf24; }
+        .limited-seats {
+            background: rgba(220, 38, 38, 0.15);
+            border: 2px solid #dc2626;
+            border-radius: 50px;
+            padding: 0.7rem;
+            margin: 1.5rem 0;
+            color: #ef4444;
+            font-weight: 700;
+            animation: pulse-border 2s infinite;
+        }
+        @keyframes pulse-border {
+            0%, 100% { border-color: #dc2626; }
+            50% { border-color: #f59e0b; }
+        }
+
+        /* Form */
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 20px;
+            padding: 2.5rem;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            backdrop-filter: blur(10px);
+        }
+        .form-group { margin-bottom: 1.5rem; }
+        .form-group label { 
+            display: block; 
+            margin-bottom: 0.5rem; 
+            font-weight: 500; 
+            color: #94a3b8; 
+        }
+        .form-group label i { margin-left: 0.5rem; }
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 2px solid rgba(59, 130, 246, 0.2);
+            background: rgba(15, 23, 42, 0.6);
+            color: #f1f5f9;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
+        }
+        .form-group input::placeholder { color: #64748b; }
+        .form-group .help-text {
+            color: #64748b;
+            font-size: 0.85rem;
+            margin-top: 0.3rem;
+            display: block;
+        }
+
+        /* Telegram Card */
+        .telegram-card {
+            background: linear-gradient(135deg, rgba(38, 165, 228, 0.12), rgba(15, 23, 42, 0.9));
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            margin-top: 2rem;
+            border: 2px solid rgba(38, 165, 228, 0.3);
+            transition: all 0.4s ease;
+        }
+        .telegram-card:hover {
+            border-color: #26A5E4;
+            box-shadow: 0 10px 40px rgba(38, 165, 228, 0.15);
+        }
+        .telegram-link {
+            font-size: 1.2rem;
+            background: rgba(38, 165, 228, 0.05);
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border: 2px dashed rgba(38, 165, 228, 0.2);
+            color: #fbbf24;
+            font-weight: 500;
+        }
+        .telegram-card .warning-text { color: #fbbf24; }
+
+        /* Contact Grid */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+        .contact-card {
+            background: rgba(30, 41, 59, 0.4);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.4s ease;
+            text-decoration: none;
+            color: #f1f5f9;
+            display: block;
+            border: 1px solid rgba(59, 130, 246, 0.1);
+        }
+        .contact-card:hover { 
+            transform: translateY(-5px); 
+            background: rgba(59, 130, 246, 0.12); 
+            border-color: #3b82f6;
+        }
+        .contact-icon { 
+            font-size: 3rem; 
+            margin-bottom: 1rem; 
+        }
+        .contact-card .phone-icon { color: #3b82f6; }
+        .contact-card .email-icon { color: #dc2626; }
+        .contact-card .whatsapp-icon { color: #25D366; }
+        .contact-card .telegram-icon { color: #26A5E4; }
+        .contact-card .globe-icon { color: #f59e0b; }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            border-radius: 20px;
+            padding: 2.5rem;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            border: 2px solid rgba(59, 130, 246, 0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-content .success-icon { 
+            font-size: 4rem; 
+            color: #34d399; 
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(15, 23, 42, 0.95);
+            text-align: center;
+            padding: 2.5rem;
+            border-top: 2px solid rgba(59, 130, 246, 0.15);
+        }
+        footer p { color: #94a3b8; }
+        footer .footer-highlight { color: #60a5fa; }
+
+        /* WhatsApp Float */
+        .whatsapp-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            color: #fff;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 5px 25px rgba(37, 211, 102, 0.4);
+            z-index: 100;
+            animation: pulse-wa 2s infinite;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .whatsapp-float:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 35px rgba(37, 211, 102, 0.6);
+        }
+        @keyframes pulse-wa {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle { display: block; }
+            .nav-links {
+                display: none;
+                width: 100%;
+                flex-direction: column;
+                text-align: center;
+                padding: 1rem 0;
+                gap: 1rem;
+            }
+            .nav-links.active { display: flex; }
+            .hero h1 { font-size: 2rem; }
+            .countdown-number { font-size: 1.5rem; min-width: 60px; }
+            .ticker-content { font-size: 0.7rem; gap: 1rem; }
+            .section-title { font-size: 1.8rem; }
+            .trainer-card { padding: 1.5rem; }
+            .trainer-avatar { width: 100px; height: 100px; font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="particles" id="particles"></div>
+
+<!-- Navigation -->
+<nav id="navbar">
+    <div class="nav-container">
+        <div class="logo">GeoGebra<span> Masterclass</span></div>
+        <div class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home" class="active">الرئيسية</a></li>
+            <li><a href="#trainer">المدرب</a></li>
+            <li><a href="#about">عن الدورة</a></li>
+            <li><a href="#outline">المحتوى</a></li>
+            <li><a href="#examples">أمثلة</a></li>
+            <li><a href="#register">تسجيل</a></li>
+            <li><a href="#contact">اتصل بنا</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Ticker / Marquee -->
+<div class="ticker-bar">
+    <div class="ticker-content">
+        <span><i class="fas fa-calendar-check blue-icon"></i> <strong style="color:#fbbf24;">الأحد القادم</strong> - 20:00 مساءً</span>
+        <span><i class="fas fa-tag gold-icon"></i> سعر خاص: <strong style="color:#fbbf24;">2500 دج</strong> فقط</span>
+        <span><i class="fas fa-users red-icon"></i> <strong style="color:#ef4444;">المقاعد محدودة</strong> - سجل الآن!</span>
+        <span><i class="fas fa-graduation-cap blue-icon"></i> شهادة معتمدة + كتاب PDF</span>
+        <span><i class="fab fa-telegram-plane tg-icon"></i> عبر <strong style="color:#26A5E4;">Telegram</strong> - الرابط يرسل عبر واتساب</span>
+        <span><i class="fas fa-star gold-icon"></i> مع المدرب والمؤلف <strong style="color:#60a5fa;">بن الدين بويعقوب</strong></span>
+        <span><i class="fas fa-calendar-check blue-icon"></i> <strong style="color:#fbbf24;">الأحد القادم</strong> - 20:00 مساءً</span>
+        <span><i class="fas fa-tag gold-icon"></i> سعر خاص: <strong style="color:#fbbf24;">2500 دج</strong> فقط</span>
+        <span><i class="fas fa-users red-icon"></i> <strong style="color:#ef4444;">المقاعد محدودة</strong> - سجل الآن!</span>
+        <span><i class="fas fa-graduation-cap blue-icon"></i> شهادة معتمدة + كتاب PDF</span>
+        <span><i class="fab fa-telegram-plane tg-icon"></i> عبر <strong style="color:#26A5E4;">Telegram</strong> - الرابط يرسل عبر واتساب</span>
+        <span><i class="fas fa-star gold-icon"></i> مع المدرب والمؤلف <strong style="color:#60a5fa;">بن الدين بويعقوب</strong></span>
+    </div>
+</div>
+
+<!-- Hero Section -->
+<section id="home" class="hero">
+    <div class="hero-content" data-aos="fade-up">
+        <div class="hero-badge">
+            <i class="fas fa-crown" style="color:#fbbf24;"></i> 
+            <span style="color:#f1f5f9;">🎯 الفوج الثاني</span> 
+            <span class="red-text">- عدد المقاعد محدود</span>
+        </div>
+        <h1>تعلم GeoGebra من الصفر<br>إلى الاحتراف</h1>
+        <p>برنامج رياضي ديناميكي يجمع بين الهندسة والجبر وجداول البيانات والرسوم البيانية في برنامج واحد</p>
+        
+        <div class="countdown-container" data-aos="fade-up" data-aos-delay="200">
+            <div class="countdown-title"><i class="fas fa-hourglass-half"></i> ⏳ الوقت المتبقي على بداية الدورة</div>
+            <div class="countdown" id="countdown">
+                <div class="countdown-item"><div class="countdown-number" id="days">00</div><div>يوم</div></div>
+                <div class="countdown-item"><div class="countdown-number" id="hours">00</div><div>ساعة</div></div>
+                <div class="countdown-item"><div class="countdown-number" id="minutes">00</div><div>دقيقة</div></div>
+                <div class="countdown-item"><div class="countdown-number" id="seconds">00</div><div>ثانية</div></div>
+            </div>
+        </div>
+        
+        <div>
+            <a href="#register" class="btn btn-primary"><i class="fas fa-user-plus"></i> سجل الآن</a>
+        </div>
+    </div>
+</section>
+
+<!-- Trainer Section -->
+<section id="trainer">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">👨‍🏫 المدرب والمؤلف</h2>
+        <div class="trainer-card" data-aos="fade-up">
+            <div class="trainer-avatar"><i class="fas fa-chalkboard-user"></i></div>
+            <div class="trainer-info">
+                <h3>بن الدين بويعقوب</h3>
+                <p class="book-title"><i class="fas fa-book-open"></i> مؤلف كتاب <strong>"الإنشاء بالجيوجبرا"</strong></p>
+                <p>خبير في توظيف GeoGebra في التعليم الرياضي، ومؤلف أول كتاب عربي شامل لتعلم GeoGebra من الصفر إلى الاحتراف.</p>
+                <p>يحتوي الكتاب على أكثر من <span class="highlight-red">15 فصلاً</span> تغطي جميع جوانب البرنامج مع أمثلة تطبيقية ومشاريع تفاعلية.</p>
+                <div style="margin-top: 1rem;">
+                    <i class="fab fa-whatsapp" style="color:#25D366;"></i> 0665636170
+                    <i class="fas fa-envelope" style="color:#ef4444; margin-right:1rem;"></i> inpsbeneddine2@gmail.com
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section id="about">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">🌟 عن الدورة</h2>
+        <div class="features-grid">
+            <div class="feature-card" data-aos="fade-up"><div class="feature-icon"><i class="fas fa-chart-line"></i></div><h3>تطور GeoGebra</h3><p>تطورت GeoGebra لتصبح أداة قوية ومتعددة الاستخدامات للتدريس وتعلم الرياضيات بشكل ديناميكي.</p></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="100"><div class="feature-icon"><i class="fas fa-cubes"></i></div><h3>إمكانات متعددة</h3><p>الهندسة، الدوال، حساب التفاضل والتكامل، الجبر، الإحصاء والاحتمالات.</p></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="200"><div class="feature-icon"><i class="fas fa-laptop-code"></i></div><h3>منصة عالمية</h3><p>أكثر من مليون ملف مورد تم إنشاؤها من خلال مجتمعنا متعدد اللغات.</p></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="300"><div class="feature-icon"><i class="fas fa-mobile-alt"></i></div><h3>منصات متعددة</h3><p>يعمل على Windows، Mac، Linux، iOS، Android، ونسخة الويب.</p></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="400"><div class="feature-icon"><i class="fas fa-clock"></i></div><h3>دورة مكثفة</h3><p>أسبوع واحد - 20:00 مساءً - <span style="color:#fbbf24;">الأحد القادم</span></p></div>
+            <div class="feature-card" data-aos="fade-up" data-aos-delay="500"><div class="feature-icon"><i class="fas fa-tag"></i></div><h3>سعر خاص</h3><p><span style="color:#fbbf24; font-size:1.5rem; font-weight:700;">2500 دج</span> فقط للدورة كاملة</p></div>
+        </div>
+    </div>
+</section>
+
+<!-- Course Outline -->
+<section id="outline" style="background: rgba(15, 23, 42, 0.3);">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">📚 ماذا ستتعلم؟</h2>
+        <div class="outline-grid">
+            <div class="outline-item"><div class="outline-number">1</div> بدء تشغيل GeoGebra</div>
+            <div class="outline-item"><div class="outline-number">2</div> واجهة البرنامج وأشرطة الأدوات</div>
+            <div class="outline-item"><div class="outline-number">3</div> عمليات أساسية (إنشاء، تعديل، حذف)</div>
+            <div class="outline-item"><div class="outline-number">4</div> نوافذ مختلفة وترتيبها</div>
+            <div class="outline-item"><div class="outline-number">5</div> نافذة العمل Graphique</div>
+            <div class="outline-item"><div class="outline-number">6</div> حقل المدخلات والأوامر</div>
+            <div class="outline-item"><div class="outline-number">7</div> المؤشرات والتحريك</div>
+            <div class="outline-item"><div class="outline-number">8</div> إدراج الصور وتصديرها</div>
+            <div class="outline-item"><div class="outline-number">9</div> الدوال العددية والاشتقاق</div>
+            <div class="outline-item"><div class="outline-number">10</div> الحساب التكاملي والمساحات</div>
+            <div class="outline-item"><div class="outline-number">11</div> الهندسة والإنشاءات</div>
+            <div class="outline-item"><div class="outline-number">12</div> الإحصاء وجداول البيانات</div>
+            <div class="outline-item"><div class="outline-number">13</div> أمثلة تطبيقية متقدمة</div>
+            <div class="outline-item"><div class="outline-number">14</div> إنشاء موارد تعليمية تفاعلية</div>
+            <div class="outline-item"><div class="outline-number">15</div> شهادة إتمام الدورة</div>
+        </div>
+    </div>
+</section>
+
+<!-- Examples Section -->
+<section id="examples">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">🎯 أمثلة من الكتاب والمدرب</h2>
+        <div class="examples-gallery">
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/g22gz3hh?embed"></iframe><div class="example-info"><h4>التمثيل البياني لدالة تآلفية</h4></div></div>
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/mvh6s89n?embed"></iframe><div class="example-info"><h4>الدالة الخطية والتآلفية</h4></div></div>
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/znydst4b?embed"></iframe><div class="example-info"><h4>الدالة مربع ومعادلة الدرجة الثانية</h4></div></div>
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/bv3a3r8n?embed"></iframe><div class="example-info"><h4>دالة الجذر التربيعي</h4></div></div>
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/ha5ayqg2?embed"></iframe><div class="example-info"><h4>دالة مقلوب</h4></div></div>
+            <div class="example-card"><iframe src="https://www.geogebra.org/classic/x9mvtx5?embed"></iframe><div class="example-info"><h4>الدائرة المثلثية</h4></div></div>
+        </div>
+    </div>
+</section>
+
+<!-- Telegram Section -->
+<section id="telegram">
+    <div class="container">
+        <div class="telegram-card" data-aos="fade-up">
+            <i class="fab fa-telegram-plane" style="font-size: 3.5rem; color: #26A5E4;"></i>
+            <h2 style="color:#60a5fa; margin-top:0.5rem;">📲 الدورة عبر Telegram</h2>
+            <p style="color:#94a3b8;">ستنعقد الدورة مباشرة عبر مجموعة Telegram الخاصة.</p>
+            <div class="telegram-link">
+                <i class="fas fa-lock" style="color:#fbbf24;"></i> 
+                <strong style="color:#fbbf24;">🔒 الرابط خاص - يرسل عبر واتساب بعد التسجيل</strong>
+            </div>
+            <p class="warning-text">⚠️ ملاحظة: سيتم إرسال رابط مجموعة Telegram عبر واتساب الخاص بك بعد التسجيل مباشرة</p>
+            <a href="#register" class="btn btn-primary">
+                <i class="fas fa-user-plus"></i> سجل الآن للحصول على الرابط
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section id="pricing" style="background: rgba(15, 23, 42, 0.2);">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">💰 اشترك الآن</h2>
+        <div class="pricing-card" data-aos="fade-up">
+            <i class="fas fa-crown" style="font-size: 2.5rem; color: #fbbf24;"></i>
+            <h3>دورة GeoGebra المتكاملة</h3>
+            <div class="price">2500 <small>دج</small></div>
+            <p><i class="fas fa-check-circle check-blue"></i> أسبوع كامل من التدريب المكثف</p>
+            <p><i class="fas fa-check-circle check-blue"></i> شهادة إتمام معتمدة من المدرب</p>
+            <p><i class="fas fa-check-circle check-gold"></i> كتاب "الإنشاء بالجيوجبرا" PDF</p>
+            <p><i class="fas fa-check-circle check-blue"></i> دعم فني طوال فترة الدورة</p>
+            <p><i class="fas fa-check-circle check-gold"></i> مجموعة تليغرام خاصة + فيديوهات مسجلة</p>
+            <div class="limited-seats"><i class="fas fa-exclamation-triangle"></i> 🚨 المقاعد محدودة! لا تفوت الفرصة</div>
+        </div>
+    </div>
+</section>
+
+<!-- Registration Form -->
+<section id="register">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">📝 نموذج التسجيل</h2>
+        <div class="form-container" data-aos="fade-up">
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label><i class="fas fa-user" style="color:#3b82f6;"></i> الاسم الكامل</label>
+                    <input type="text" id="fullname" required placeholder="أدخل اسمك الكامل">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-envelope" style="color:#dc2626;"></i> البريد الإلكتروني</label>
+                    <input type="email" id="email" required placeholder="example@email.com">
+                </div>
+                <div class="form-group">
+                    <label><i class="fab fa-whatsapp" style="color:#25D366;"></i> حساب واتساب (للتواصل والحصول على رابط المجموعة)</label>
+                    <input type="text" id="whatsapp" required placeholder="مثال: 0665636170">
+                    <small class="help-text">سيتم إرسال رابط مجموعة Telegram إلى هذا الرقم عبر واتساب</small>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt" style="color:#fbbf24;"></i> تاريخ التسجيل</label>
+                    <input type="text" id="regDate" readonly style="background: rgba(15, 23, 42, 0.4);">
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%; font-size: 1.1rem;">
+                    <i class="fas fa-paper-plane"></i> تسجيل والمشاركة
+                </button>
+            </form>
+            <p style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">
+                <i class="fas fa-lock" style="color:#3b82f6;"></i> بياناتك آمنة وسيتم إرسال رابط المجموعة إلى واتساب الخاص بك
+            </p>
+        </div>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section id="contact" style="background: rgba(15, 23, 42, 0.2);">
+    <div class="container">
+        <h2 class="section-title" data-aos="fade-up">📞 تواصل مع المدرب</h2>
+        <div class="contact-grid">
+            <a href="tel:0665636170" class="contact-card">
+                <div class="contact-icon phone-icon"><i class="fas fa-phone-alt"></i></div>
+                <h3 style="color:#60a5fa;">اتصال هاتفي</h3>
+                <p style="color:#94a3b8;">0665 63 61 70</p>
+            </a>
+            <a href="mailto:inpsbeneddine2@gmail.com" class="contact-card">
+                <div class="contact-icon email-icon"><i class="fas fa-envelope"></i></div>
+                <h3 style="color:#ef4444;">البريد الإلكتروني</h3>
+                <p style="color:#94a3b8;">inpsbeneddine2@gmail.com</p>
+            </a>
+            <a href="https://wa.me/213665636170" target="_blank" class="contact-card">
+                <div class="contact-icon whatsapp-icon"><i class="fab fa-whatsapp"></i></div>
+                <h3 style="color:#25D366;">واتساب</h3>
+                <p style="color:#94a3b8;">انقر للتواصل المباشر</p>
+            </a>
+            <a href="#register" class="contact-card">
+                <div class="contact-icon telegram-icon"><i class="fab fa-telegram-plane"></i></div>
+                <h3 style="color:#26A5E4;">Telegram</h3>
+                <p style="color:#94a3b8;">احصل على الرابط بعد التسجيل</p>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2026 <span class="footer-highlight">دورة GeoGebra</span> - بن الدين بويعقوب | مؤلف كتاب <span style="color:#fbbf24;">"الإنشاء بالجيوجبرا"</span></p>
+    <p style="margin-top:0.5rem;">جميع الحقوق محفوظة | تعلم الرياضيات بطريقة ديناميكية وممتعة</p>
+</footer>
+
+<!-- WhatsApp Float -->
+<a href="https://wa.me/213665636170" target="_blank" class="whatsapp-float">
+    <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- Success Modal -->
+<div id="successModal" class="modal">
+    <div class="modal-content">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2 style="margin: 1rem 0; color:#f1f5f9;">🎉 تم التسجيل بنجاح!</h2>
+        <p style="color:#94a3b8;">شكراً لتسجيلك في دورة GeoGebra مع المدرب <strong style="color:#60a5fa;">بن الدين بويعقوب</strong>.</p>
+        <p style="color:#94a3b8;">سيتم إرسال رابط مجموعة <strong style="color:#26A5E4;">Telegram</strong> إلى واتساب الخاص بك خلال 24 ساعة.</p>
+        <p style="color:#fbbf24;">📅 الأحد القادم - الساعة <strong>20:00</strong> مساءً</p>
+        <button class="btn btn-primary" onclick="closeModal()" style="margin-top: 1.5rem;">حسناً</button>
+    </div>
+</div>
+
+<script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+<script>
+    AOS.init({ duration: 1000, once: true });
+
+    // Particles
+    function createParticles() {
+        const container = document.getElementById('particles');
+        const colors = ['rgba(59,130,246,0.2)', 'rgba(220,38,38,0.15)', 'rgba(245,158,11,0.15)'];
+        for (let i = 0; i < 60; i++) {
+            const p = document.createElement('div');
+            p.classList.add('particle');
+            p.style.width = (Math.random() * 6 + 2) + 'px';
+            p.style.height = p.style.width;
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = Math.random() * 25 + 12 + 's';
+            p.style.animationDelay = Math.random() * 12 + 's';
+            container.appendChild(p);
+        }
+    }
+    createParticles();
+
+    // Navbar scroll
+    window.addEventListener('scroll', () => {
+        document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Mobile menu
+    document.getElementById('menuToggle').addEventListener('click', () => {
+        document.getElementById('navLinks').classList.toggle('active');
+    });
+
+    // ========================================
+    // حساب تاريخ الأحد القادم تلقائياً
+    // ========================================
+    function getNextSunday() {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0=Sunday
+        let daysUntilSunday = (0 - currentDay + 7) % 7;
+        if (daysUntilSunday === 0) daysUntilSunday = 7;
+        const nextSunday = new Date(now);
+        nextSunday.setDate(now.getDate() + daysUntilSunday);
+        nextSunday.setHours(20, 0, 0, 0);
+        return nextSunday;
+    }
+
+    const targetDate = getNextSunday();
+
+    // Countdown
+    function updateCountdown() {
+        const now = new Date().getTime();
+        const d = targetDate.getTime() - now;
+        if (d <= 0) {
+            document.getElementById('days').innerHTML = '00';
+            document.getElementById('hours').innerHTML = '00';
+            document.getElementById('minutes').innerHTML = '00';
+            document.getElementById('seconds').innerHTML = '00';
+            return;
+        }
+        document.getElementById('days').innerHTML = String(Math.floor(d / (1000*60*60*24))).padStart(2,'0');
+        document.getElementById('hours').innerHTML = String(Math.floor((d % (1000*60*60*24)) / (1000*60*60))).padStart(2,'0');
+        document.getElementById('minutes').innerHTML = String(Math.floor((d % (1000*60*60)) / (1000*60))).padStart(2,'0');
+        document.getElementById('seconds').innerHTML = String(Math.floor((d % (1000*60)) / 1000)).padStart(2,'0');
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Set registration date
+    document.getElementById('regDate').value = new Date().toLocaleString('ar');
+
+    // ========================================
+    // إعدادات JSONBin
+    // ========================================
+    const JSONBIN_BIN_ID  = '6a26f13fda38895dfe9afa7d';
+    const JSONBIN_API_KEY = '$2a$10$nNkpERV6bc6IpksHCYQAZOnV2PYTAWMEbwOxY9jVXgyRkLr03ykXm';
+    const JSONBIN_URL = `https://api.jsonbin.io/v3/b/${JSONBIN_BIN_ID}`;
+    const JSONBIN_HEADERS = {
+        'Content-Type': 'application/json',
+        'X-Master-Key': JSONBIN_API_KEY,
+        'X-Bin-Private': 'false'
+    };
+
+    async function fetchRegistrations() {
+        try {
+            const res = await fetch(JSONBIN_URL + '/latest', {
+                headers: { 'X-Master-Key': JSONBIN_API_KEY }
+            });
+            const json = await res.json();
+            return json.record?.registrations || [];
+        } catch {
+            return JSON.parse(localStorage.getItem('geogebra_registrations') || '[]');
+        }
+    }
+
+    async function saveRegistration(newEntry) {
+        try {
+            const current = await fetchRegistrations();
+            current.push(newEntry);
+            await fetch(JSONBIN_URL, {
+                method: 'PUT',
+                headers: JSONBIN_HEADERS,
+                body: JSON.stringify({ registrations: current })
+            });
+            localStorage.setItem('geogebra_registrations', JSON.stringify(current));
+        } catch {
+            const local = JSON.parse(localStorage.getItem('geogebra_registrations') || '[]');
+            local.push(newEntry);
+            localStorage.setItem('geogebra_registrations', JSON.stringify(local));
+        }
+    }
+
+    // Form submission
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> جاري الإرسال...';
+
+        const formData = {
+            fullname: document.getElementById('fullname').value,
+            email: document.getElementById('email').value,
+            whatsapp: document.getElementById('whatsapp').value,
+            registrationDate: new Date().toISOString(),
+            courseDate: targetDate.toISOString().split('T')[0],
+            courseTime: '20:00',
+            platform: 'Telegram'
+        };
+        
+        try {
+            await saveRegistration(formData);
+        } catch(err) {
+            console.error('خطأ في الحفظ:', err);
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> تسجيل والمشاركة';
+        document.getElementById('successModal').style.display = 'flex';
+        this.reset();
+        document.getElementById('regDate').value = new Date().toLocaleString('ar');
+    });
+
+    function closeModal() {
+        document.getElementById('successModal').style.display = 'none';
+    }
+    window.closeModal = closeModal;
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if(target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('navLinks').classList.remove('active');
+            }
+        });
+    });
+</script>
+</body>
+</html>
